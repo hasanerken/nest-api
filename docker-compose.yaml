@@ -1,0 +1,95 @@
+version: "3.8" # Secrets are only available since this version of Docker Compose
+services:
+  # vuestore:
+  #     container_name: vuestore
+  #     restart: always
+  #     build: ./vuestore
+  #     volumes:
+  #       - ./vuestore:/app
+  #     ports:
+  #       - '8181:80'
+  #     depends_on:
+  #       - fastapi
+  # fastapi:
+  #   container_name: fastapi
+  #   restart: always
+  #   build: ./fastapi
+  #   environment:
+  #     - MONGO_URI=mongodb://mongodb1,mongodb2,mongodb3:27017/fastPacs?replicaSet=rsmongo
+  #   ports:
+  #     - "3000:3000"
+  #   command: npm run start
+  #   volumes:
+  #     - ./fastapi:/app
+  #   depends_on:
+  #     - mongodb1
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - 27017:27017
+    # entrypoint:
+    #   [
+    #     "/usr/bin/mongod",
+    #     "--replSet",
+    #     "rsmongo",
+    #     "--bind_ip_all",
+    #     "--wiredTigerCacheSizeGB",
+    #     "1"
+    # ]
+
+  # mongodb2:
+  #   image: mongo:4.4
+  #   restart: always
+  #   container_name: mongodb2
+  #   volumes:
+  #     - mongodata2:/data/db
+  #   ports:
+  #     - "27122:27017"
+  #   entrypoint:
+  #     [
+  #       "/usr/bin/mongod",
+  #       "--replSet",
+  #       "rsmongo",
+  #       "--bind_ip_all",
+  #       "--wiredTigerCacheSizeGB",
+  #       "1"
+  #     ]
+
+  # mongodb3:
+  #   image: mongo:4.4
+  #   restart: always
+  #   container_name: mongodb3
+  #   volumes:
+  #     - mongodata3:/data/db
+  #   ports:
+  #     - "27123:27017"
+  #   entrypoint:
+  #     [
+  #       "/usr/bin/mongod",
+  #       "--replSet",
+  #       "rsmongo",
+  #       "--bind_ip_all",
+  #       "--wiredTigerCacheSizeGB",
+  #       "1"
+  #     ]
+
+  # mongosetup:
+  #   image: "mongo-setup"
+  #   build: "./mongo-setup"
+  #   container_name: "mongosetup"
+  #   depends_on:
+  #     - mongodb1
+  #   volumes:
+  #     - mongostatus:/data/
+  #   depends_on:
+  #     - mongodb1
+  #     - mongodb2
+  #     - mongodb3
+volumes:
+  mongo-data:
+  # mongodata2:
+  # mongodata3:
+  # mongostatus:
