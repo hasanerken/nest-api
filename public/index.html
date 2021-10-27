@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="v-app">
+      <section class="alert">
+        <div v-for="alert in alerts">
+          <div>
+            {{ alert.fullDocument }} ||| {{alert.operationType}}
+
+          </div>
+        </div>
+      </section>
+      <section class="chat">
+        <h1>{{ title }}</h1>
+        <form action="">
+          <input type="text" v-model="text" />
+          <button type="submit" @click.prevent="sendChatMessage()">Send</button>
+        </form>
+        <div>
+          <ul>
+            <li v-for="msg of messages">
+              <strong> {{msg.sender}}: </strong>
+              <p>{{msg.message}}</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+    <script>
+      var app = new Vue({
+        el: '#v-app',
+        data: {
+          title: 'Web socket tester',
+          text: '',
+          messages: [],
+          alerts: [],
+          studies: [],
+          socket: { chat: null, alerts: null,  studies: null },
+        },
+        methods: {
+          sendChatMessage() {
+            console.log(`send: ${this.text}`);
+            this.socket.chat.emit('chatToServer', {
+              sender: this.username,
+              message: this.text,
+            });
+            this.text = '';
+          },
+          receiveChatMessage(msg) {
+            console.log(`recv: ${msg}`);
+            this.messages.push(msg);
+          },    
+          receiveAlertMessage(msg) {
+            console.log(`recv: ${msg}`);
+            this.alerts.push(msg);
+          },
+        },
+        created() {
+          this.username = prompt('Enter your name:');
+          this.socket.chat = io('http://localhost:3000/chat');
+          this.socket.chat.on('chatToClient', (msg) => {
+            this.receiveChatMessage(msg);
+          });
+          this.socket.studies = io('http://localhost:3000/studies');
+          this.socket.studies.on('studyToClient', (msg) => {
+            console.log(msg)
+            this.receiveAlertMessage(msg);
+          });
+        },
+      });
+    </script>
+  </body>
+</html>

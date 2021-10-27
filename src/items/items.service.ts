@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { Item } from './entities/item.entity';
 import { Model } from 'mongoose';
@@ -12,10 +13,23 @@ import stream = require('stream');
 import fastify = require('fastify');
 import * as util from 'util';
 import { AppResponseDto } from './dto/app-response.dto';
+import { ItemsGateway } from './items.gateway';
 
 @Injectable()
 export class ItemsService {
-  constructor(@InjectModel('Item') private readonly itemModel: Model<Item>) {}
+  logger: Logger;
+  constructor(
+    @InjectModel('Item') private readonly itemModel: Model<Item>,
+    private readonly itemsGateway: ItemsGateway,
+  ) {
+    this.logger = new Logger(ItemsService.name);
+
+    this.itemModel.watch().on('change', (change) => {
+      this.logger.debug('change :::', change);
+      const { fullDocument, operationType } = change;
+      this.itemsGateway.sendToAll({ fullDocument, operationType });
+    });
+  }
 
   async findAll(): Promise<Item[]> {
     return await this.itemModel.find();
@@ -26,6 +40,7 @@ export class ItemsService {
   }
 
   async create(item: Item): Promise<Item> {
+    this.logger.debug('change');
     const newItem = new this.itemModel(item);
     return await newItem.save();
   }
