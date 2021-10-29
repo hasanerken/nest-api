@@ -4,7 +4,6 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { Item } from './entities/item.entity';
 
 @WebSocketGateway({ namespace: '/studies' })
 export class ItemsGateway {

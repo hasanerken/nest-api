@@ -2,21 +2,17 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document } from 'mongoose';
 
-export type ItemDocument = Item & Document;
+export type UserDocument = User & Document;
 
 @Schema()
-export class Item {
+export class User {
   @Prop({ required: true, index: true, unique: true })
   @ApiProperty()
-  name: string;
+  username: string;
 
   @Prop()
-  @ApiProperty()
-  quantity: number;
-
-  @Prop()
-  @ApiProperty()
-  description: string;
+  @ApiProperty({ required: true })
+  password: string;
 }
 
-export const ItemSchema = SchemaFactory.createForClass(Item);
+export const UserSchema = SchemaFactory.createForClass(User);

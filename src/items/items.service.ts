@@ -4,7 +4,8 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { Item } from './entities/item.entity';
+// import { Item } from './entities/item.entity';
+import { Item } from './schemas/item.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 

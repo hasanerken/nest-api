@@ -9,10 +9,13 @@ import {
   Req,
   Res,
   Logger,
+  HttpException,
+  BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateItemDto } from './dto/create-item.dto';
 import { ItemsService } from './items.service';
-import { Item } from './entities/item.entity';
+import { Item } from './schemas/item.schema';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import {
   ApiBadRequestResponse,
@@ -20,7 +23,9 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('items')
 @Controller('items')
 export class ItemsController {
@@ -52,10 +57,21 @@ export class ItemsController {
   }
 
   @ApiCreatedResponse({ type: Item })
-  @ApiBadRequestResponse()
+  @ApiBadRequestResponse({
+    status: 401,
+    description: 'Lütfen farklı bir isim ile tekrar deneyin.',
+  })
   @Post()
   async create(@Body() createItemDto: CreateItemDto): Promise<Item> {
-    return await this.itemsService.create(createItemDto);
+    try {
+      const createdItem = await this.itemsService.create(createItemDto);
+      return createdItem;
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException(
+        'Lütfen farklı bir isim ile tekrar deneyin!',
+      );
+    }
   }
 
   @Delete(':id')

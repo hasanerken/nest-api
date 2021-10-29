@@ -10,14 +10,21 @@ import { join } from 'path';
 import { ChatGateway } from './chat/chat.gateway';
 import { AlertGateway } from './alert/alert.gateway';
 import { AlertController } from './alert/alert.controller';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ItemsModule,
-    MongooseModule.forRoot(config.mongoURI),
+    MongooseModule.forRoot(config.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
     }),
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController, AlertController],
   providers: [AppService, ChatGateway, AlertGateway],
