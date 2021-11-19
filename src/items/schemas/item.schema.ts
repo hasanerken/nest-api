@@ -17,6 +17,14 @@ export class Item {
   @Prop()
   @ApiProperty()
   description: string;
+
+  @Prop()
+  @ApiProperty()
+  isPublished: true;
+
+  @Prop()
+  @ApiProperty()
+  itemOwner: string;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

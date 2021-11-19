@@ -12,6 +12,7 @@ import { AlertGateway } from './alert/alert.gateway';
 import { AlertController } from './alert/alert.controller';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { CaslModule } from './casl/casl.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UsersModule } from './users/users.module';
     }),
     AuthModule,
     UsersModule,
+    CaslModule,
   ],
   controllers: [AppController, AlertController],
   providers: [AppService, ChatGateway, AlertGateway],

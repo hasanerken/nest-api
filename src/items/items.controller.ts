@@ -25,7 +25,6 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
 @ApiTags('items')
 @Controller('items')
 export class ItemsController {
@@ -44,6 +43,7 @@ export class ItemsController {
     return await this.itemsService.uploadFile(req, res);
   }
 
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: Item, isArray: true })
   @Get()
   async findAll(): Promise<Item[]> {
